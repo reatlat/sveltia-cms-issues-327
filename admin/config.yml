@@ -7,7 +7,7 @@ backend:
   auth_endpoint: /api/auth
 publish_mode: editorial_workflow
 media_folder: 'posts/assets'
-public_folder: 'assets'
+public_folder: './assets'
 collections:
   - name: 'posts'
     label: 'Posts'
