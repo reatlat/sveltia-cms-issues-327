@@ -1,0 +1,66 @@
+backend:
+  name: github
+  repo: reatlatsveltia-cms-issues-327
+  branch: main # Branch to update (optional; defaults to master)
+  site_domain: https://sveltia-cms-issues-327.pages.dev
+  base_url: https://sveltia-cms-issues-327.pages.dev
+  auth_endpoint: /api/auth
+publish_mode: editorial_workflow
+media_folder: 'posts/assets'
+public_folder: 'assets'
+collections:
+  - name: 'posts'
+    label: 'Posts'
+    folder: 'posts'
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{year}}/{{month}}/{{day}} - {{title}} [@{{author}}]'
+    editor:
+      preview: true
+    fields:
+      - label: 'Title'
+        name: 'title'
+        widget: 'string'
+        hint: 'The title of the post'
+        required: true
+      - label: 'Draft'
+        name: 'draft'
+        widget: 'boolean'
+        hint: 'Is this post a draft?'
+        default: true
+      - label: 'Publish Date'
+        name: 'date'
+        widget: 'datetime'
+        required: true
+        default: '{{now}}'
+      - label: 'UUID (Unique Identifier) v4'
+        name: 'uuid'
+        widget: 'uuid'
+        required: true
+#      - label: 'Permalink'
+#        name: 'permalink'
+#        widget: 'permalink'
+#        hint: 'The permalink of the post'
+#        required: true
+      - label: 'Author'
+        name: 'author'
+        widget: 'select'
+        multiple: false
+        options:
+          - label: 'Alex Zappa (@reatlat)'
+            value: 'reatlat'
+          - label: 'Alexander Zapparov (@zapalblizh)'
+            value: 'zapalblizh'
+          - label: 'Drew Tendero (@atenlotrad)'
+            value: 'atenlotrad'
+          - label: 'Lorea Moreno (@loraider259)'
+            value: 'loraider259'
+        hint: 'The author of the post'
+        required: true
+      - label: 'Description'
+        name: 'desc'
+        widget: 'string'
+        required: true
+      - label: 'Body'
+        name: 'body'
+        widget: 'markdown'

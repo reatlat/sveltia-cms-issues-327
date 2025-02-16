@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Content Manager</title>
+</head>
+<body>
+    <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+<!--<script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>-->
+<script>
+    CMS.registerWidget(
+        'uuid',
+        createClass({
+            getDefaultProps: function() {
+                return {
+                    value: ''
+                }
+            },
+            uuid: function(options) {
+                options = options || {};
+                var size = options.size || 21;
+                var url = options.url || "Uint8ArdomValuesObj012345679BCDEFGHIJKLMNPQRSTWXYZ_cfghkpqvwxyz-";
+                var id = "";
+
+                if (typeof self === "undefined" || (!self.crypto && !self.msCrypto)) {
+                    while (0 < size--) {
+                        id += url[(Math.random() * 64) | 0];
+                    }
+                    return id;
+                }
+
+                // else
+                var crypto = self.crypto || self.msCrypto;
+                var bytes = crypto.getRandomValues(new Uint8Array(size));
+                while (0 < size--) {
+                    id += url[bytes[size] & 63];
+                }
+                return id;
+            },
+            uuid_v4: function() {
+                let crypto = (typeof self !== "undefined" && (self.crypto || self.msCrypto)) || null;
+
+                if (crypto) {
+                    // Generate a random UUID using crypto API
+                    let bytes = crypto.getRandomValues(new Uint8Array(16));
+
+                    // Set the version to 4 (UUID v4)
+                    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+                    // Set the variant to RFC 4122
+                    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+                    return [...bytes].map((byte, i) => {
+                        let hex = byte.toString(16).padStart(2, "0");
+                        return (i === 4 || i === 6 || i === 8 || i === 10) ? `-${hex}` : hex;
+                    }).join('');
+                } else {
+                    // Fallback to Math.random() if crypto API is not available (less secure)
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        let r = Math.random() * 16 | 0;
+                        let v = c === 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                }
+            },
+            componentDidMount: function() {
+                var value = this.props.value;
+                var onChange = this.props.onChange;
+                var uuid = this.uuid_v4;
+
+                if (!value) {
+                    onChange(uuid());
+                }
+            },
+            render: function() {
+                var value = this.props.value;
+                var classNameWrapper = this.props.classNameWrapper;
+                var forID = this.props.forID;
+
+                return h('span', { id: forID, className: classNameWrapper }, value);
+            }
+        })
+    );
+</script>
+<script>
+    const PostsPreview = createClass({
+        render: function() {
+            const entry = this.props.entry;
+            return h('article', {}, //wrap the content in an article and div to get the same layout as the main website.
+                h('div', {"className": "prose mx-auto"},
+                    h('h1', {}, entry.getIn(['data', 'title'])),
+                    // I added in published and update date previews but this would add too much complexity to format like the site so I just removed them as clients can see the dates in the UI.
+                    //h('datetime', {}, new Date(entry.getIn(['data', 'publish'])).toString()),
+                    //h('datetime', {}, new Date(entry.getIn(['data', 'update'])).toString() || "No date"),
+                    h('div', {}, this.props.widgetFor('body'))
+                )
+            );
+        }
+    });
+    CMS.registerPreviewTemplate("posts", PostsPreview);
+    CMS.registerPreviewStyle("post-preview.css");
+</script>
+</body>
+</html>
