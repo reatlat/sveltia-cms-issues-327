@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: reatlatsveltia-cms-issues-327
+  repo: reatlat/sveltia-cms-issues-327
   branch: main # Branch to update (optional; defaults to master)
   site_domain: https://sveltia-cms-issues-327.pages.dev
   base_url: https://sveltia-cms-issues-327.pages.dev
